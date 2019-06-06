@@ -37,6 +37,7 @@ class ToDoListViewController: UITableViewController {
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         let item: ToDoItem = itemArray[indexPath.row]
         
+        // Ternary Conditional Operator - question ? answer1 : answer2.
         cell.textLabel?.text = item.description
         cell.accessoryType = item.completed ? UITableViewCell.AccessoryType.checkmark : UITableViewCell.AccessoryType.none
         
@@ -48,15 +49,50 @@ class ToDoListViewController: UITableViewController {
         let cell: UITableViewCell = tableView.cellForRow(at: indexPath)!
         let item: ToDoItem = itemArray[indexPath.row]
         
+        // Ternary Conditional Operator - question ? answer1 : answer2.
         item.completed = !item.completed
         cell.accessoryType = item.completed ? UITableViewCell.AccessoryType.checkmark : UITableViewCell.AccessoryType.none
         
+        itemArray[indexPath.row] = item
         saveToDoItemList()
         
         tableView.deselectRow(at: indexPath, animated: true)
+        tableView.reloadData()
     }
     
     //MARK: Barbutton methods
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        var itemTextField: UITextField = UITextField()
+        let alert: UIAlertController = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: UIAlertController.Style.alert)
+        let alertAddAction: UIAlertAction = UIAlertAction(title: "Add Item", style: UIAlertAction.Style.default) {
+            (action) in
+            
+            if let description = itemTextField.text {
+                if !description.isEmpty {
+                    let item: ToDoItem = ToDoItem()
+                    item.description = itemTextField.text!
+                    item.completed = false
+                    
+                    self.itemArray.append(item)
+                    self.saveToDoItemList()
+                    
+                    self.tableView.reloadData()
+                }
+            }
+        }
+        let alertCancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) {
+            (action) in
+        }
+        
+        alert.addTextField { (textField) in
+            textField.placeholder = "Create new item"
+            itemTextField = textField
+        }
+        alert.addAction(alertAddAction)
+        alert.addAction(alertCancelAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
     
     //MARK: Manupulate data methods
     func loadToDoItemList() {
@@ -64,7 +100,15 @@ class ToDoListViewController: UITableViewController {
     }
     
     func saveToDoItemList() {
+        let encoder: PropertyListEncoder = PropertyListEncoder()
         
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: filePath!)
+        }
+        catch {
+            print("Error saving todo item list, \(error)")
+        }
     }
     
 }
