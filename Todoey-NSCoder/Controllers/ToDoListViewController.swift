@@ -28,5 +28,44 @@ class ToDoListViewController: UITableViewController {
         
     }
 
+    //MARK: Tableview datasource methods
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return itemArray.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let item: ToDoItem = itemArray[indexPath.row]
+        
+        cell.textLabel?.text = item.description
+        cell.accessoryType = item.completed ? UITableViewCell.AccessoryType.checkmark : UITableViewCell.AccessoryType.none
+        
+        return cell
+    }
+    
+    //MARK: Tableview delegate methods
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell: UITableViewCell = tableView.cellForRow(at: indexPath)!
+        let item: ToDoItem = itemArray[indexPath.row]
+        
+        item.completed = !item.completed
+        cell.accessoryType = item.completed ? UITableViewCell.AccessoryType.checkmark : UITableViewCell.AccessoryType.none
+        
+        saveToDoItemList()
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    //MARK: Barbutton methods
+    
+    //MARK: Manupulate data methods
+    func loadToDoItemList() {
+        
+    }
+    
+    func saveToDoItemList() {
+        
+    }
+    
 }
 
