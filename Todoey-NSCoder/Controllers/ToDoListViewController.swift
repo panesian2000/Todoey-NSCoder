@@ -26,6 +26,8 @@ class ToDoListViewController: UITableViewController {
             filePath = baseURL.appendingPathComponent("ToDoItem.plist")
         }
         
+        loadToDoItemList()
+        
     }
 
     //MARK: Tableview datasource methods
@@ -96,7 +98,15 @@ class ToDoListViewController: UITableViewController {
     
     //MARK: Manupulate data methods
     func loadToDoItemList() {
+        let decoder: PropertyListDecoder = PropertyListDecoder()
         
+        do {
+            let data = try Data(contentsOf: filePath!)
+            itemArray = try decoder.decode([ToDoItem].self, from: data)
+        }
+        catch {
+            print("Error loading todo list, \(error)")
+        }
     }
     
     func saveToDoItemList() {
